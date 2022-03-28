@@ -9,6 +9,7 @@ import datetime
 
 def get_feat_eng_df(source_file):
     df = pd.read_csv(source_file)
+    logging.info(f"currently preprocessing...{source_file}")
     logging.info(f"before preprocessing...{df.shape}")
     df = drop_features(df)
     df = create_review_time(df)
@@ -16,6 +17,7 @@ def get_feat_eng_df(source_file):
     df = create_sentiment(df)
     df["reviewText_len"] = df["review"].astype(str).apply(len)
     df = drop_review_len_zero(df)
+    logging.info(f"after preprocessing...{df.shape}")
     return df
 
 

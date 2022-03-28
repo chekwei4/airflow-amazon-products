@@ -18,4 +18,5 @@ def get_clean_review_df(source_file):
     logging.info(f"after dropping na for {source_file}...{df.shape}")
     logging.info(f"running clean review for {source_file}...")
     df["review_no_punct"] = df["review"].apply(remove_punctuation)
+    df = df.drop(["review", "reviewText_len", "overall"], axis=1)
     return df

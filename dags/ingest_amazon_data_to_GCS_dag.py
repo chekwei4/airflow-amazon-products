@@ -41,7 +41,7 @@ def upload_raw_to_gcs():
     url_filename_list = get_url_filename_list()
     for filename in url_filename_list:
         bucket = GCP_GCS_BUCKET
-        object_name = f"raw_amazon_data/{filename[8:-10]}.csv"
+        object_name = f"raw_amazon_data_zoomcamp/{filename[8:-10]}.csv"
         local_file = f"{PATH_TO_CONTAINER_HOME}/{filename}.csv"
 
         client = storage.Client()
@@ -58,16 +58,16 @@ def upload_clean_to_gcs():
     url_filename_list = get_url_filename_list()
     for filename in url_filename_list:
         bucket = GCP_GCS_BUCKET
-        object_name = f"clean_amazon_data/{filename[8:-10]}.csv"
+        object_name = f"clean_amazon_data_zoomcamp/{filename[8:-10]}.csv"
         local_file = f"{PATH_TO_CONTAINER_HOME}/{filename}.csv"
 
         client = storage.Client()
         bucket = client.bucket(bucket)
 
-        logging.info("Uploading {object_name}...")
+        logging.info(f"Uploading {object_name}...")
         blob = bucket.blob(object_name)
         blob.upload_from_filename(f"{local_file}")
-        logging.info("Upload {object_name} completed...")
+        logging.info(f"Upload {object_name} completed...")
 
 
 # def unzip_file_to_csv_task():
