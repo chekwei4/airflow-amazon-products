@@ -147,7 +147,7 @@ GCS Bucket for raw data
 *Estimated time for this Airflow task to succeed: ~* ***1 min***
 
 ## remove_local_file
-This is the sixth task of the data pipeline. It is a good practice to perform some housekeeping once the data pipeline is almost completed. As such, this task will delete all the files from the container. Once this task completes, we should see no data files inside our container as below:
+This is the sixth task of the data pipeline. It is a good practice to perform some housekeeping once the data pipeline is almost completed. As such, this task will delete all the files from the container after they have been successfully uploaded onto GCS bucket. Once this task completes, we should see no data files inside our container as below:
 
 *Estimated time for this Airflow task to succeed: ~* ***Few seconds***
 
