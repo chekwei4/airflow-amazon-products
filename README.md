@@ -1,4 +1,4 @@
-# Amazon Product Data Pipeline
+# Amazon Product Reviews Data Pipeline
 ## Project Objective
 To create a simple data pipeline which aims to serve the following:
 1. Automatically download 10 raw data files from [source](http://jmcauley.ucsd.edu/data/amazon/) 
