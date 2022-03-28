@@ -80,7 +80,7 @@ In Apache Airflow, there are several tasks within the `ingest_amazon_data_GCS.py
 ## download_data
 This is the first task of the data pipeline. As the name suggests, this task is responsible for downloading the raw files from [source](http://jmcauley.ucsd.edu/data/amazon/). Depending on the size of the individual raw files, the time takes to download each file varies. The task will first read `download_url.txt`, and based on the URLs present in the text file, it will proceed to download and save them into the docker container. 
 
-*Estimated time for this Airflow task to succeed: ~* ***2 mins*** (subject to internet speed)
+Estimated time for this Airflow task to succeed: ~2 mins (subject to internet speed)
 
 ## unzip_file_to_csv
 This is the second task of the data pipeline. This task is in-charged of unzipping the `.gz` files, extract the `.json` and lastly, converting them to `.csv` files.
@@ -119,7 +119,7 @@ drwxr-xr-x 8 airflow root  256 Mar 28 03:01 dags
 -rw-rw-r-- 1 airflow root  11M Mar 28 05:26 reviews_Musical_Instruments_5.json.gz.csv
 ```
 
-*Estimated time for this Airflow task to succeed: ~* ***3 mins***
+Estimated time for this Airflow task to succeed: ~3 mins
 
 ## feature_engineer
 This is the third task of the data pipeline. This task will help to 
@@ -129,14 +129,14 @@ This is the third task of the data pipeline. This task will help to
 - create `sentiment` feature, which bins `overall` ratings into either `pos` or `neg`. `sentiment` will serve as the target feature for the ML pipeline
 - create `reviewText_len` feature, and based on this value, we will then drop `reviewText_len=0` records, which suggests that this particular record does not have any product reviews.
 
-*Estimated time for this Airflow task to succeed: ~* ***5 mins*** 
+Estimated time for this Airflow task to succeed: ~5 mins
 
 ## clean_review
 This is the fourth task of the data pipeline. This task will do two things:
 - drop record with NA for `review` feature
 - convert all `review` text to lower case, and dropping all punctuation marks
 
-*Estimated time for this Airflow task to succeed: ~* ***15 mins***
+Estimated time for this Airflow task to succeed: ~15 mins
 
 ## ingest_clean_data_to_GCS
 This is the fifth task of the data pipeline. As the name suggests, this task is responsible for uploading all the clean data files to Google Cloud Storage. Once this task is completed, we can go to our GCS bucket on Googe console, and we will see the files present as below:
@@ -148,12 +148,12 @@ GCS Bucket for raw data
 <img src="images/raw_data_bucket.png">
 
 
-*Estimated time for this Airflow task to succeed: ~* ***1 min***
+Estimated time for this Airflow task to succeed: ~1 min
 
 ## remove_local_file
 This is the sixth task of the data pipeline. It is a good practice to perform some housekeeping once the data pipeline is almost completed. As such, this task will delete all the files from the container after they have been successfully uploaded onto GCS bucket. Once this task completes, we should see no data files inside our container as below:
 
-*Estimated time for this Airflow task to succeed: ~* ***Few seconds***
+Estimated time for this Airflow task to succeed: ~Few seconds
 
 ```bash
 airflow@ede05540312a:/opt/airflow$ ls -lrth
@@ -170,7 +170,7 @@ drwxr-xr-x 8 airflow root  256 Mar 28 06:09 dags
 ## ingest_raw_data_to_GCS
 This is the seventh and last task of the data pipeline. Note that this task has no dependencing on most of the previous tasks. The only dependency this tasks has is task `unzip_file_to_csv_task`. This task simply uploads the raw `.csv` files after unzipping is done. Once this task is completed, we can go to our GCS bucket, and we will see the files present as below:
 
-*Estimated time for this Airflow task to succeed: ~ ***1 min*** (subject to internet speed)
+Estimated time for this Airflow task to succeed: ~1 min (subject to internet speed)
 
 # End State for Airflow Orchestration
 The end state is to flow both cleaned and raw sets of `.csv` data files into the data warehouse, which is GCS bucket as seen below:
@@ -183,8 +183,6 @@ Airflow Tree
 
 Airflow Graph
 <img src="images/airflow_graph.png">
-
-
 
 # Creating Tables in Data Warehouse
 Now that we have ingested all our data (both clean and raw) into Google Cloud Storage, we can create tables in BigQuery. 
