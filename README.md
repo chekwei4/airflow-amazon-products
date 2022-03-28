@@ -164,7 +164,7 @@ This is the seventh and last task of the data pipeline. Note that this task has 
 
 ## Overall Dag Flow
 
-# End State
+# End State for Airflow Orchestration
 The end state is to flow both cleaned and raw sets of `.csv` data files into the data warehouse, which is GCS bucket as seen below:
 
 ## Airflow
@@ -184,7 +184,78 @@ GCS Bucket for clean data
 GCS Bucket for raw data
 <img src="images/raw_data_bucket.png">
 
-# Creating  Data in Data Warehouse
+# Creating Tables in Data Warehouse
+Now that we have ingested all our data (both clean and raw) into Google Cloud Storage, we can create tables in BigQuery. 
+
+1. Go to BigQuery in Google Console, select the appropriate project. 
+2. Create a new dataset 
+3. Within the empty dataset, create a new table by selecting below configurations:
+
+<img src="images/create_table.png">
+
+
+4. After around 2-3 mins, the table with all our cleaned data should be created. Here, we have `clean_amazon_data` table created which consists of product reviews from all 10 categories.  
+
+<img src="images/sample_query.png">
+
+
+More details on creating tables in BigQuery can be here by the [offical Google doc](https://cloud.google.com/bigquery/external-data-cloud-storage#creating_and_querying_a_permanent_external_table)
+
+# Data Transformation in Data Warehouse
+## Creating review_length column
+The first transformation we will be doing is to create a `review_length` column through BigQuery console. This column will tell us how long/short each product review will be. 
+
+Below are the SQL commands we will be running:
+
+```sql
+--To create a new empty column in the existing table called 'review_length'
+
+ALTER TABLE `amazon-project1-341508.clean.clean_amazon_data` ADD COLUMN `review_length` INTEGER;
+```
+
+```sql
+--To update the newly created column 
+
+UPDATE `amazon-project1-341508.clean.clean_amazon_data` SET review_length = LENGTH(review_no_punct)
+WHERE LENGTH(review_no_punct) != 0;
+```
+
+## Creating year column
+The second transformation we will be doing is to create a `year` column through BigQuery console. This column will tell us which year each product review was submitted by the buyer. 
+
+```sql
+--To create a new empty column in the existing table called 'review_year'
+
+ALTER TABLE `amazon-project1-341508.clean.clean_amazon_data` ADD COLUMN `year_review` INTEGER;
+```
+
+```sql
+--To update the newly created column by extract year from the existing 'reviewTime' column
+
+UPDATE `amazon-project1-341508.clean.clean_amazon_data` SET year_review = EXTRACT(YEAR FROM reviewTime)
+WHERE LENGTH(review_no_punct) != 0;
+```
+
+## End State for Data Warehouse Transformation
+We can see that two new columns have been created:
+- review_length
+- year_review
+
+<img src="images/dw_transform.png">
+
+# Google Data Studio
+Here, we use Google Data Studio to create some simple visusalisation of the data we have ingested by Airflow, and transformed in BigQuery. 
+
+We will first connect our data source by selecting BigQuery, and the correct dataset and table.
+
+<img src="images/data_studio1.png">
+
+The pdf version of the dashboard can be in the parent directory of this git repository `Amazon_Product_Review_Viz.pdf`
+
+The URL for the dashboard can be found [here](https://datastudio.google.com/reporting/803210f0-6b6e-4620-98f1-caf3e462acb3). Please feel free to access the dashboard on Google Data Studio and play around with the interactive charts. If the dashboard is unavailable due to permission issue, please reach me here: chekweichia@gmail.com
+
+Below is a screenshot of the dashboard created. 
+<img src="images/data_studio2.png">
 
 
 # Reproduce
