@@ -1,3 +1,7 @@
+<p align="center">
+    <img height=100, src="./images/amazon_banner.png">
+</p>
+
 # Amazon Product Reviews Data Pipeline
 ## Project Objective
 To create a simple data pipeline which aims to serve the following:
