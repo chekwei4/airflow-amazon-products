@@ -254,7 +254,7 @@ We will first connect our data source by selecting BigQuery, and the correct dat
 
 <img src="images/data_studio1.png">
 
-The pdf version of the dashboard can be in the parent directory of this git repository `Amazon_Product_Review_Viz.pdf`
+The pdf version of the dashboard can be found in the parent directory of this git repository `Amazon_Product_Review_Viz.pdf` or [here](https://github.com/chekwei4/airflow-amazon-products/blob/64e45cb6629522d323348c157e49725b35ed9723/Amazon_Product_Review_Viz.pdf)
 
 The URL for the dashboard can be found [here](https://datastudio.google.com/reporting/803210f0-6b6e-4620-98f1-caf3e462acb3). Please feel free to access the dashboard on Google Data Studio and play around with the interactive charts. If the dashboard is unavailable due to permission issue, please reach me here: chekweichia@gmail.com
 
