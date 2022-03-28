@@ -2,12 +2,12 @@
 ## Project Objective
 To create a simple data pipeline which aims to serve the following:
 1. Automatically download 10 raw data files from [source](http://jmcauley.ucsd.edu/data/amazon/) 
-2. Unzip the data files into `.csv` format
+2. Unzip the data files and convert them into `.csv` format
 3. Perform data cleaning on the data files
-4. Ingest both cleaned and raw data into GCS
+4. Ingest both cleaned and raw data files into Google Cloud Storage
 
 
-End state of the data pipeline would be  `.csv` files ready for ML pipeline to extract as `pandas.Dataframe`, which subsequently performs NLP (Natural Language Processing) techniques on the data. 
+End state of the data pipeline would be  `.csv` files ready for ML pipeline to extract as `pandas.Dataframe`, which subsequently performs NLP (Natural Language Processing) techniques on the data. The ML pipeline portion of the project will not be covered in this git repository. 
 
 ## Motivation
 The idea stemmed from a ML project which I was working on - An end-to-end ML pipeline that aims to classify positive
@@ -20,7 +20,7 @@ Hence, it sparked the idea of creating a data pipeline which can automate the en
 ## Data
 Raw data is available on the [source website](http://jmcauley.ucsd.edu/data/amazon/). 
 
-Data consists of product reviews written by consumers who have purchases items from Amazon online store. The products are categorised into different product genre. Eg. Clothing, Shoes and Jewelry, Office Products, Musical Instruments etc.
+Data consists of product reviews written by buyers who have purchases items from Amazon online store. The products are categorised into different product genre. Eg. Clothing, Shoes and Jewelry, Office Products, Musical Instruments etc. Each data file consists of product reviews from the same category.
 
 The raw data downloaded is a `.gz` format, and after running below, a `.json` file is unzipped. 
 
@@ -57,7 +57,7 @@ A sample row of record from a `pandas.Dataframe` as below:
 
 As you can see, only certain features will most likely be relevant to the ML pipeline in order to classify whether, or not, is a product review Positive / Negative - `reviewText`, `overall`.
 
-To analyse further, below is one of th positive product reviews we are working on:
+To analyse further, below is one of the positive product reviews we are working on:
 > Wonder my niece wears it every single day, yellow is her favorite color right now an this cute little tutu made he da. It is well built and we hope she gets lots of wear out of it.
 
 
@@ -96,7 +96,6 @@ ls -lrth
 After performing `ls -lrth`, we can see that below are some of the files downloaded. We can see both `.gz` and `.csv` format within the container:
 
 ```bash
-
 airflow@ede05540312a:/opt/airflow$ ls -lrth
 total 94M
 -rw-r--r-- 1 root    root   39 Feb 21 08:48 requirements.txt
@@ -136,7 +135,14 @@ This is the fourth task of the data pipeline. This task will do two things:
 *Estimated time for this Airflow task to succeed: ~* ***15 mins***
 
 ## ingest_clean_data_to_GCS
-This is the fifth task of the data pipeline. As the name suggests, this task is responsible for uploading all the clean data files to Google Cloud Storage. Once this task is completed, we can go to our GCS bucket, and we will see the files present as below:
+This is the fifth task of the data pipeline. As the name suggests, this task is responsible for uploading all the clean data files to Google Cloud Storage. Once this task is completed, we can go to our GCS bucket on Googe console, and we will see the files present as below:
+
+GCS Bucket for clean data
+<img src="images/clean_data_bucket.png">
+
+GCS Bucket for raw data
+<img src="images/raw_data_bucket.png">
+
 
 *Estimated time for this Airflow task to succeed: ~* ***1 min***
 
@@ -162,8 +168,6 @@ This is the seventh and last task of the data pipeline. Note that this task has 
 
 *Estimated time for this Airflow task to succeed: ~ ***1 min*** (subject to internet speed)
 
-## Overall Dag Flow
-
 # End State for Airflow Orchestration
 The end state is to flow both cleaned and raw sets of `.csv` data files into the data warehouse, which is GCS bucket as seen below:
 
@@ -176,13 +180,7 @@ Airflow Tree
 Airflow Graph
 <img src="images/airflow_graph.png">
 
-## Google Cloud Storage
 
-GCS Bucket for clean data
-<img src="images/clean_data_bucket.png">
-
-GCS Bucket for raw data
-<img src="images/raw_data_bucket.png">
 
 # Creating Tables in Data Warehouse
 Now that we have ingested all our data (both clean and raw) into Google Cloud Storage, we can create tables in BigQuery. 
@@ -194,8 +192,12 @@ Now that we have ingested all our data (both clean and raw) into Google Cloud St
 <img src="images/create_table.png">
 
 
-4. After around 2-3 mins, the table with all our cleaned data should be created. Here, we have `clean_amazon_data` table created which consists of product reviews from all 10 categories.  
+4. After around 2-3 mins, the table with all of our cleaned data should be created. Here, we have `clean_amazon_data` table created which consists of product reviews from all 10 categories.  
 
+Below is a sample query which shows 10 records of our table created: 
+```sql
+SELECT * FROM `amazon-project1-341508.clean.clean_amazon_data` LIMIT 10;
+```
 <img src="images/sample_query.png">
 
 
@@ -221,7 +223,7 @@ WHERE LENGTH(review_no_punct) != 0;
 ```
 
 ## Creating year column
-The second transformation we will be doing is to create a `year` column through BigQuery console. This column will tell us which year each product review was submitted by the buyer. 
+The second transformation we will be doing is to create a `year` column through BigQuery console. This column will tell us which year the product review was submitted by the buyer. 
 
 ```sql
 --To create a new empty column in the existing table called 'review_year'
@@ -262,6 +264,8 @@ Below is a screenshot of the dashboard created.
 To run the entire data pipeline, we require few things:
 1. `docker-compose.yaml`
 2. GCP credential file 
+3. Create a Google Cloud project
+3b. Within the project, create a Google Cloud Storage bucket
 
 ## Setting up Airflow
 1. Build the image (only first-time, or when there's any change in the Dockerfile, takes ~15 mins for the first-time):
